@@ -1,0 +1,261 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.effect.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.paint.*?>
+<?import javafx.scene.shape.*?>
+<?import javafx.scene.text.*?>
+
+<Pane prefHeight="360.0" prefWidth="605.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="Interface.MainController">
+  <children>
+    <TabPane layoutX="0.0" layoutY="25.0" prefHeight="360.0" prefWidth="604.0" tabClosingPolicy="UNAVAILABLE">
+      <tabs>
+        <Tab fx:id="np" closable="true" text="Нова Пошта">
+          <content>
+            <AnchorPane minHeight="0.0" minWidth="0.0" onMouseClicked="#InicializeTabNovaPoshta" onMouseMoved="#InicializeTabNovaPoshta" prefHeight="200.0" prefWidth="600.0">
+              <children>
+                <Button fx:id="getstatusnp" disable="true" layoutX="400.0" layoutY="170.0" mnemonicParsing="false" onAction="#GetStatusNP" prefHeight="50.0" prefWidth="180.0" styleClass="button-Restart" text="Статус Відправок">
+                  <effect>
+                    <Lighting>
+                      <bumpInput>
+                        <Shadow />
+                      </bumpInput>
+                      <light>
+                        <javafx.scene.effect.Light.Distant />
+                      </light>
+                    </Lighting>
+                  </effect>
+                </Button>
+                <Label fx:id="namefilettnnp" layoutX="350.0" layoutY="15.0" prefHeight="40.0" prefWidth="240.0" text="виберіть файл з списком накладних">
+                  <font>
+                    <Font name="Arial Bold" size="11.0" fx:id="x1" />
+                  </font>
+                  <textFill>
+                    <Color blue="0.024" green="0.024" red="1.000" fx:id="x2" />
+                  </textFill>
+                </Label>
+                <Button fx:id="browsgetstatusnp" disable="true" layoutX="350.0" layoutY="60.0" mnemonicParsing="false" onAction="#BrowsGetStatusNP" onMouseClicked="#InicializeTabNovaPoshta" prefHeight="25.0" prefWidth="115.0" styleClass="button-Restart" text="Вибрати Файл  ..." />
+                <Label fx:id="howmanyttnnp" font="$x1" layoutX="500.0" layoutY="60.0" prefHeight="25.0" prefWidth="50.0">
+                  <textFill>
+                    <Color blue="0.024" green="0.612" red="0.063" fx:id="x3" />
+                  </textFill>
+                </Label>
+                <Hyperlink fx:id="novaposhta" layoutX="450.0" layoutY="250.0" onAction="#NovaPoshta" onMouseClicked="#InicializeTabNovaPoshta" text="Нова Пошта" />
+                <TextField fx:id="npttn" alignment="CENTER" disable="true" layoutX="280.0" layoutY="135.0" prefHeight="20.0" prefWidth="200.0" promptText="номер накладної" />
+                <RadioButton fx:id="manynp" layoutX="280.0" layoutY="200.0" mnemonicParsing="false" onAction="#ManyNP" onMouseClicked="#InicializeTabNovaPoshta" selected="false" text="для списку">
+                  <toggleGroup>
+                    <ToggleGroup fx:id="NP" />
+                  </toggleGroup>
+                </RadioButton>
+                <RadioButton fx:id="foronenp" layoutX="280.0" layoutY="170.0" mnemonicParsing="false" onAction="#ForOneNP" onMouseClicked="#InicializeTabNovaPoshta" text="для однієї" toggleGroup="$NP" />
+                <Label fx:id="iffileisemptynp" alignment="CENTER" layoutX="285.0" layoutY="95.0" prefHeight="30.0" prefWidth="180.0" text="" visible="true">
+                  <font>
+                    <Font name="Arial Bold" size="18.0" fx:id="x4" />
+                  </font>
+                </Label>
+                <Button fx:id="reloadttn" disable="true" graphicTextGap="0.0" layoutX="510.0" layoutY="135.0" maxHeight="-1.0" maxWidth="-1.0" minHeight="10.0" minWidth="11.0" mnemonicParsing="false" onAction="#ReloadTtn" prefHeight="24.0" prefWidth="29.0" styleClass="reload" text="" />
+                <Button id="Clearnp" fx:id="clearTTN" disable="true" layoutX="480.0" layoutY="135.0" maxHeight="-1.0" maxWidth="-1.0" minHeight="-1.0" minWidth="-1.0" mnemonicParsing="false" onAction="#ClearTTN" prefHeight="20.999900000002526" prefWidth="28.000099999997474" styleClass="refresh" text="Х" />
+                <Label fx:id="dnivnaposhti" alignment="CENTER" layoutX="22.0" layoutY="130.0" prefWidth="80.0" text="Днів на пошті" visible="false" />
+                <Label fx:id="numberttn" alignment="CENTER" layoutX="22.0" layoutY="90.0" prefWidth="80.0" text="ТТН" visible="false" />
+                <Label id="status" fx:id="statusttn" alignment="CENTER" layoutX="22.0" layoutY="110.0" prefHeight="-1.0" prefWidth="80.0" text="Статус" visible="false" />
+                <Label fx:id="ifststusrefusing" alignment="CENTER" layoutX="20.0" layoutY="60.0" prefHeight="30.0" prefWidth="203.0" text="" visible="false">
+                  <font>
+                    <Font name="System Bold" size="12.0" fx:id="x6" />
+                  </font>
+                </Label>
+                <Label fx:id="dnivnaposhtipost" alignment="CENTER" layoutX="103.0" layoutY="130.0" prefWidth="120.0" text="" visible="false" />
+                <Label fx:id="statuspost" alignment="CENTER" layoutX="103.0" layoutY="110.0" prefWidth="120.0" text="" visible="false" />
+                <Label fx:id="numberttnpost" alignment="CENTER" layoutX="103.0" layoutY="90.0" prefWidth="120.0" text="" visible="false" />
+                <Label fx:id="regusngstatus" alignment="CENTER" layoutX="20.0" layoutY="45.0" prefHeight="15.0" prefWidth="203.0" text="" visible="false" />
+                <Line fx:id="line1" endX="100.0" layoutX="121.0" layoutY="86.0" startX="-100.0" visible="false" />
+                <Line fx:id="line2" endX="100.0" layoutX="121.0" layoutY="108.0" startX="-100.0" visible="false" />
+                <Line fx:id="line3" endX="100.0" layoutX="121.0" layoutY="128.0" startX="-100.0" visible="false" />
+                <Line fx:id="line4" endX="-21.0" endY="-46.0" layoutX="123.0" layoutY="195.0" startX="-21.0" startY="-108.0" visible="false" />
+                <Line fx:id="line5" endX="100.0" layoutX="121.0" layoutY="149.0" startX="-100.0" visible="false" />
+                <Line fx:id="line6" endX="-21.0" endY="-46.0" layoutX="42.0" layoutY="194.0" startX="-21.0" startY="-150.0" visible="false" />
+                <Line fx:id="line7" endX="-21.0" endY="-46.0" layoutX="242.0" layoutY="194.0" startX="-21.0" startY="-150.0" visible="false" />
+                <Line fx:id="line8" endX="100.0" layoutX="121.0" layoutY="64.0" startX="-100.0" visible="false" />
+                <Line fx:id="line9" endX="100.0" layoutX="121.0" layoutY="44.0" startX="-100.0" visible="false" />
+                <RadioButton id="manynp" fx:id="newmanynp" layoutX="280.0" layoutY="230.0" mnemonicParsing="false" onAction="#NewManyNP" onMouseClicked="#InicializeTabNovaPoshta" selected="false" text="для НОВОГО СПИСКУ" toggleGroup="$NP" />
+              </children>
+            </AnchorPane>
+          </content>
+        </Tab>
+        <Tab fx:id="senderblok" disable="false" text="Відправка СМС">
+          <content>
+            <AnchorPane minHeight="0.0" minWidth="0.0" onMouseClicked="#InicializeTabsenderblok" prefHeight="300.0" prefWidth="600.0">
+              <children>
+                <RadioButton fx:id="smartio" disable="true" layoutX="280.0" layoutY="170.0" mnemonicParsing="false" onAction="#Smartio" text="Smartio">
+                  <toggleGroup>
+                    <ToggleGroup fx:id="sms" />
+                  </toggleGroup>
+                </RadioButton>
+                <RadioButton fx:id="renomax" disable="true" layoutX="280.0" layoutY="200.0" mnemonicParsing="false" onAction="#Renomax" text="Renomax" toggleGroup="$sms" />
+                <Button fx:id="SendSMS" disable="true" layoutX="400.0" layoutY="170.0" mnemonicParsing="false" onAction="#SendSMS" prefHeight="50.0" prefWidth="180.0" styleClass="button-Restart" text="Відправити СМСки">
+                  <effect>
+                    <Lighting>
+                      <bumpInput>
+                        <Shadow />
+                      </bumpInput>
+                      <light>
+                        <javafx.scene.effect.Light.Distant />
+                      </light>
+                    </Lighting>
+                  </effect>
+                </Button>
+                <Label fx:id="howmanysms" font="$x1" layoutX="500.0" layoutY="60.0" prefHeight="25.0" prefWidth="50.0" textFill="$x3" />
+                <Button fx:id="browsfilefromsms" layoutX="350.0" layoutY="60.0" mnemonicParsing="false" onAction="#BrowsFileFromSms" prefHeight="25.0" prefWidth="115.0" styleClass="button-Restart" text="Вибрати Файл  ..." />
+                <Label fx:id="namefilesms" font="$x1" layoutX="350.0" layoutY="15.0" prefHeight="40.0" prefWidth="240.0" text="виберіть файл з списком накладних" textFill="$x2" />
+                <Button fx:id="gethowmanymoney" layoutX="5.0" layoutY="60.0" mnemonicParsing="false" onAction="#GetHowManyMoney" prefHeight="25.0" prefWidth="115.0" styleClass="button-Restart" text="Стан Рахунку" />
+                <Label fx:id="howmanymoney1" layoutX="135.0" layoutY="60.0" prefHeight="25.0" prefWidth="100.0" text=" 0,00" textAlignment="CENTER" textOverrun="LEADING_ELLIPSIS" wrapText="true">
+                  <font>
+                    <Font name="Arial Bold Italic" size="13.0" fx:id="x5" />
+                  </font>
+                </Label>
+                <Label fx:id="whethersufficientfundsfrom" layoutX="5.0" layoutY="30.0" prefHeight="20.0" prefWidth="300.0" />
+                <Hyperlink fx:id="myatompark" layoutX="450.0" layoutY="250.0" onAction="#MyAtompark" prefHeight="20.0" prefWidth="70.0" text="Поповнити" />
+                <Label fx:id="iffileisemptysendsms" alignment="CENTER" font="$x4" layoutX="285.0" layoutY="95.0" prefHeight="30.0" prefWidth="180.0" />
+              </children>
+            </AnchorPane>
+          </content>
+        </Tab>
+        <Tab fx:id="advertising" text="Рекламні СМС">
+          <content>
+            <AnchorPane minHeight="0.0" minWidth="0.0" onMouseClicked="#InicializeTabadvertising" prefHeight="502.0" prefWidth="600.0">
+              <children>
+                <Label fx:id="whethersufficientfundsfromadvertising" layoutX="5.0" layoutY="30.0" prefHeight="20.0" prefWidth="300.0" />
+                <Label fx:id="howmanymoney" font="$x5" layoutX="135.0" layoutY="60.0" prefHeight="25.0" prefWidth="100.0" text=" 0,00" textAlignment="CENTER" textOverrun="LEADING_ELLIPSIS" wrapText="true" />
+                <Button fx:id="gethowmanymoney" layoutX="5.0" layoutY="60.0" mnemonicParsing="false" onAction="#GetHowManyMoney" prefHeight="25.0" prefWidth="115.0" styleClass="button-Restart" text="Стан Рахунку" />
+                <Label fx:id="namefilesmsadvertising" font="$x1" layoutX="350.0" layoutY="15.0" prefHeight="40.0" prefWidth="240.0" text="виберіть файл з списком телефонів" textFill="$x2" />
+                <Button fx:id="browsfilefromsmsadvertising" disable="true" layoutX="350.0" layoutY="60.0" mnemonicParsing="false" onAction="#BrowsFleFromSmsAdvertising" prefHeight="25.0" prefWidth="115.0" styleClass="button-Restart" text="Вибрати Файл  ..." />
+                <Label fx:id="howmanysmsadvertising" font="$x1" layoutX="500.0" layoutY="60.0" prefHeight="25.0" prefWidth="50.0" textFill="$x3" />
+                <Button fx:id="sendsmsadvertising" disable="true" layoutX="400.0" layoutY="170.0" mnemonicParsing="false" onAction="#SendSMSAdvertising" prefHeight="50.0" prefWidth="180.0" styleClass="button-Restart" text="Відправити СМСки">
+                  <effect>
+                    <Lighting>
+                      <bumpInput>
+                        <Shadow />
+                      </bumpInput>
+                      <light>
+                        <javafx.scene.effect.Light.Distant />
+                      </light>
+                    </Lighting>
+                  </effect>
+                </Button>
+                <TextField fx:id="messagetext" alignment="CENTER" layoutX="5.0" layoutY="170.0" prefHeight="100.0" prefWidth="250.0" promptText="текст повідомлення" />
+                <RadioButton fx:id="smartreno" disable="true" layoutX="470.0" layoutY="130.0" mnemonicParsing="false" onAction="#SmartReno" text="Smart Reno">
+                  <toggleGroup>
+                    <ToggleGroup fx:id="whatsend1" />
+                  </toggleGroup>
+                </RadioButton>
+                <TextField fx:id="telephonereceiver" layoutX="5.0" layoutY="140.0" prefHeight="20.0" prefWidth="200.0" promptText="+380ХХ ХХХ ХХ ХХ" />
+                <RadioButton fx:id="singlesms" layoutX="280.0" layoutY="170.0" mnemonicParsing="false" onAction="#SingleSms" text="Одиночні СМС">
+                  <toggleGroup>
+                    <ToggleGroup fx:id="whatsend" />
+                  </toggleGroup>
+                </RadioButton>
+                <RadioButton fx:id="massmailing" layoutX="280.0" layoutY="200.0" mnemonicParsing="false" onAction="#MassMailing" text="Масова Розсилка" toggleGroup="$whatsend" />
+                <Hyperlink fx:id="myatompark" layoutX="450.0" layoutY="250.0" onAction="#MyAtompark" prefHeight="20.0" prefWidth="70.0" text="Поповнити" />
+                <Rectangle arcHeight="5.0" arcWidth="5.0" fill="RED" height="25.0" layoutX="285.0" layoutY="3.0" stroke="BLACK" strokeType="INSIDE" width="300.0" />
+                <Label alignment="CENTER" font="$x6" layoutX="290.0" layoutY="5.0" prefHeight="20.0" prefWidth="300.0" text="Розсилка ТІЛЬКИ по номер телефону" textFill="#030303" />
+                <Label fx:id="iffileisempty" alignment="CENTER" font="$x4" layoutX="285.0" layoutY="95.0" prefHeight="30.0" prefWidth="180.0" />
+                <RadioButton fx:id="smart" disable="true" layoutX="470.0" layoutY="90.0" mnemonicParsing="false" onAction="#Smart" text="Smartio" toggleGroup="$whatsend1" />
+                <RadioButton fx:id="reno" disable="true" layoutX="470.0" layoutY="110.0" mnemonicParsing="false" onAction="#Reno" text="Renomax" toggleGroup="$whatsend1" />
+                <Label fx:id="howsms" alignment="CENTER" font="$x4" layoutX="260.0" layoutY="245.0" prefHeight="25.0" prefWidth="90.0" />
+                <Label fx:id="phonemasage" alignment="CENTER" font="$x4" layoutX="5.0" layoutY="105.0" prefHeight="30.0" prefWidth="250.0" />
+                <Label fx:id="textisempty" alignment="CENTER" layoutX="271.0" layoutY="140.0" prefHeight="25.0" prefWidth="200.0">
+                  <font>
+                    <Font name="Arial" size="12.0" />
+                  </font>
+                </Label>
+                <Button id="Clearnp" fx:id="cleartextandphone" layoutX="210.0" layoutY="140.0" maxHeight="-1.0" maxWidth="-1.0" minHeight="-1.0" minWidth="-1.0" mnemonicParsing="false" onAction="#ClearTextandPhone" prefHeight="20.999900000002526" prefWidth="28.000099999997474" styleClass="refresh" text="Х" />
+                <Button id="reloadttn" fx:id="reloadmessagetextandtelephonereceiver" graphicTextGap="0.0" layoutX="240.0" layoutY="140.0" maxHeight="-1.0" maxWidth="-1.0" minHeight="10.0" minWidth="11.0" mnemonicParsing="false" onAction="#ReloadTtnmessagetextandtelephonereceiver" prefHeight="24.0" prefWidth="29.0" styleClass="reload" text="" />
+                <Pane fx:id="paneagree" disable="true" layoutX="50.0" layoutY="100.0" prefHeight="100.0" prefWidth="500.0" visible="false">
+                  <children>
+                    <AnchorPane prefHeight="110.0" prefWidth="502.0" style="-fx-background-color: GREY;">
+                      <children>
+                        <Label fx:id="doyouagree" alignment="CENTER" layoutX="75.0" layoutY="20.0" prefHeight="25.0" prefWidth="370.0" />
+                        <Button fx:id="no" alignment="CENTER" cancelButton="true" defaultButton="true" layoutX="250.0" layoutY="50.0" mnemonicParsing="false" onAction="#No" prefHeight="50.0" prefWidth="150.0" styleClass="paneagree" text="Скасувати">
+                          <effect>
+                            <Blend />
+                          </effect>
+                        </Button>
+                        <Button fx:id="yes" layoutX="100.0" layoutY="50.0" mnemonicParsing="false" onAction="#Yes" prefHeight="50.0" prefWidth="150.0" styleClass="paneagree" text="Відправити" />
+                      </children>
+                    </AnchorPane>
+                  </children>
+                </Pane>
+              </children>
+            </AnchorPane>
+          </content>
+        </Tab>
+        <Tab disable="false" text="Настройки">
+          <content>
+            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="502.0" prefWidth="600.0">
+              <children>
+                <Rectangle arcHeight="5.0" arcWidth="5.0" height="41.0" layoutX="10.0" layoutY="20.0" opacity="0.09" stroke="BLACK" strokeType="INSIDE" width="566.0">
+                  <fill>
+                    <Color blue="0.875" green="0.875" red="0.875" fx:id="x8" />
+                  </fill>
+                </Rectangle>
+                <Rectangle arcHeight="5.0" arcWidth="5.0" fill="$x8" height="41.0" layoutX="10.0" layoutY="78.0" opacity="0.09" stroke="BLACK" strokeType="INSIDE" width="566.0" />
+                <Label alignment="CENTER" layoutX="70.0" layoutY="20.0" prefHeight="20.0" prefWidth="460.0" text="Номер Телефону відправника">
+                  <font>
+                    <Font name="Arial Bold" size="12.0" fx:id="x7" />
+                  </font>
+                </Label>
+                <Line endX="484.0" layoutX="91.0" layoutY="40.0" startX="-80.0" />
+                <Line endX="484.0" layoutX="91.0" layoutY="62.0" startX="-80.0" />
+                <Line endX="484.0" layoutX="91.0" layoutY="21.0" startX="-80.0" />
+                <Line endX="-194.0" endY="-110.0" layoutX="205.0" layoutY="131.0" startX="-194.0" startY="-69.0" />
+                <Line endX="-194.0" endY="-110.0" layoutX="770.0" layoutY="131.0" startX="-194.0" startY="-69.0" />
+                <Button fx:id="browsfoldertosavexls" layoutX="471.0" layoutY="99.0" mnemonicParsing="false" onAction="#BrowsFolderToSaveXLSNP" styleClass="setungs" text="Вибрати папку  ..." />
+                <Label fx:id="namefoldertosavexls" layoutX="15.0" layoutY="99.0" prefHeight="20.0" prefWidth="460.0" text="D:\Desktop" />
+                <Label alignment="CENTER" font="$x7" layoutX="70.0" layoutY="78.0" prefHeight="20.0" prefWidth="460.0" text="Виберіть Пакпку для Збереження ексель файлів з звітом по накладним" />
+                <Line endX="484.0" layoutX="91.0" layoutY="98.0" startX="-80.0" />
+                <Line endX="484.0" layoutX="91.0" layoutY="120.0" startX="-80.0" />
+                <Line endX="484.0" layoutX="91.0" layoutY="79.0" startX="-80.0" />
+                <Line endX="-194.0" endY="-110.0" layoutX="205.0" layoutY="189.0" startX="-194.0" startY="-69.0" />
+                <Line endX="-194.0" endY="-110.0" layoutX="770.0" layoutY="189.0" startX="-194.0" startY="-69.0" />
+                <Button layoutX="471.0" layoutY="156.0" mnemonicParsing="false" styleClass="setungs" text="Вибрати папку  ..." visible="false" />
+                <Label layoutX="15.0" layoutY="158.0" prefHeight="20.0" prefWidth="460.0" text="D:\Сєрьога\робочий стіл\Новая папка" visible="false" />
+                <Label alignment="CENTER" font="$x7" layoutX="70.0" layoutY="136.0" prefHeight="20.0" prefWidth="460.0" text="Виберіть Пакпку для Збереження ексель файлів з звітом по накладним" visible="false" />
+                <Rectangle arcHeight="5.0" arcWidth="5.0" fill="$x8" height="41.0" layoutX="9.0" layoutY="136.0" opacity="0.09" stroke="BLACK" strokeType="INSIDE" visible="false" width="566.0" />
+                <Line endX="484.0" layoutX="91.0" layoutY="156.0" startX="-80.0" visible="false" />
+                <Line endX="484.0" layoutX="91.0" layoutY="178.0" startX="-80.0" visible="false" />
+                <Line endX="484.0" layoutX="91.0" layoutY="137.0" startX="-80.0" visible="false" />
+                <Line endX="-194.0" endY="-110.0" layoutX="205.0" layoutY="247.0" startX="-194.0" startY="-69.0" visible="false" />
+                <Line endX="-194.0" endY="-110.0" layoutX="770.0" layoutY="247.0" startX="-194.0" startY="-69.0" visible="false" />
+                <Button layoutX="471.0" layoutY="214.0" mnemonicParsing="false" styleClass="setungs" text="Вибрати папку  ..." visible="false" />
+                <Label layoutX="15.0" layoutY="214.0" prefHeight="20.0" prefWidth="460.0" text="D:\Сєрьога\робочий стіл\Новая папка" visible="false" />
+                <Label alignment="CENTER" font="$x7" layoutX="70.0" layoutY="194.0" prefHeight="20.0" prefWidth="460.0" text="Виберіть Пакпку для Збереження ексель файлів з звітом по накладним" visible="false" />
+                <Rectangle arcHeight="5.0" arcWidth="5.0" fill="$x8" height="41.0" layoutX="10.0" layoutY="194.0" opacity="0.09" stroke="BLACK" strokeType="INSIDE" visible="false" width="566.0" />
+                <Line endX="484.0" layoutX="91.0" layoutY="214.0" startX="-80.0" visible="false" />
+                <Line endX="484.0" layoutX="91.0" layoutY="236.0" startX="-80.0" visible="false" />
+                <Line endX="484.0" layoutX="91.0" layoutY="195.0" startX="-80.0" visible="false" />
+                <Line endX="-194.0" endY="-110.0" layoutX="205.0" layoutY="305.0" startX="-194.0" startY="-69.0" visible="false" />
+                <Line endX="-194.0" endY="-110.0" layoutX="770.0" layoutY="305.0" startX="-194.0" startY="-69.0" visible="false" />
+                <TextField fx:id="DefaultPhoneNumberSender" layoutX="15.0" layoutY="41.0" prefHeight="20.0" prefWidth="200.0" promptText="+380 000 00 00" text="+380989225252" />
+              </children>
+            </AnchorPane>
+          </content>
+        </Tab>
+      </tabs>
+    </TabPane>
+    <ProgressIndicator fx:id="runindicator" layoutX="84.0" layoutY="330.0" prefHeight="20.0" prefWidth="29.0" progress="0.0" />
+    <Hyperlink fx:id="autor" alignment="CENTER_LEFT" layoutX="10.0" layoutY="330.0" onAction="#Autor" prefHeight="25.0" prefWidth="80.0" text="By Melnyk" textAlignment="CENTER" textFill="#ed0602">
+      <font>
+        <Font name="System Bold" size="14.0" />
+      </font>
+    </Hyperlink>
+    <ProgressBar fx:id="progeress" layoutX="116.0" layoutY="330.0" prefHeight="20.0" prefWidth="469.0" progress="0.0" visible="true" />
+    <Label fx:id="status" alignment="CENTER" contentDisplay="CENTER" labelFor="$howmanymoney1" layoutX="0.0" layoutY="0.0" prefHeight="25.0" prefWidth="604.0">
+      <font>
+        <Font name="System Bold" size="18.0" />
+      </font>
+    </Label>
+  </children>
+</Pane>
