@@ -91,7 +91,7 @@ public class Buttons extends Thread {
 		}
 		error.ReportOfSendSMS(this, lines, smssend, duble);
 	}
-
+///
 	// метод відправки смс попередньо діставши номер телефоу з нової пошти
 	private String SendSMStoGetPhoneNumberToNP(String TTN, String whatsend1, List<String> lines, int smssend) {
 		WriteTTNtoFileAfterSendSMS(TTN);
