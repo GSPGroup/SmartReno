@@ -31,28 +31,33 @@ public class RadioButtons {
 			controller.reno.setDisable(true);
 			controller.smartreno.setDisable(true);
 		} else {
-			if (symasms > rah) {
-				controller.whethersufficientfundsfromadvertising.setText("Недостатньокоштів на рахунку ");
-				error.YouDontHaveMoneyToSendAllSMS();
-				controller.whethersufficientfundsfromadvertising.setTextFill(Color.RED);
-				controller.smart.setDisable(true);
-				controller.reno.setDisable(true);
-				controller.smartreno.setDisable(true);
-				controller.smart.setSelected(true);
-				controller.reno.setSelected(true);
-				controller.smartreno.setSelected(true);
-			} else {
-				controller.whethersufficientfundsfromadvertising.setText("коштів достатньо для відправки СМС");
-				controller.whethersufficientfundsfromadvertising.setTextFill(Color.GREEN);
-				controller.smart.setDisable(false);
-				controller.reno.setDisable(false);
-				controller.smartreno.setDisable(false);
-				controller.smart.setSelected(false);
-				controller.reno.setSelected(false);
-				controller.smartreno.setSelected(false);
-			}
+			WhatSummSMS(rah, symasms);
 		}
 		controller.initialize();
+	}
+
+	// яка сука смс чи достатня для відправки смс
+	private void WhatSummSMS(double rah, double symasms) {
+		if (symasms > rah) {
+			controller.whethersufficientfundsfromadvertising.setText("Недостатньокоштів на рахунку ");
+			error.YouDontHaveMoneyToSendAllSMS();
+			controller.whethersufficientfundsfromadvertising.setTextFill(Color.RED);
+			controller.smart.setDisable(true);
+			controller.reno.setDisable(true);
+			controller.smartreno.setDisable(true);
+			controller.smart.setSelected(true);
+			controller.reno.setSelected(true);
+			controller.smartreno.setSelected(true);
+		} else {
+			controller.whethersufficientfundsfromadvertising.setText("коштів достатньо для відправки СМС");
+			controller.whethersufficientfundsfromadvertising.setTextFill(Color.GREEN);
+			controller.smart.setDisable(false);
+			controller.reno.setDisable(false);
+			controller.smartreno.setDisable(false);
+			controller.smart.setSelected(false);
+			controller.reno.setSelected(false);
+			controller.smartreno.setSelected(false);
+		}
 	}
 
 	// рідіобатон масова відправка рекламних смс
@@ -63,6 +68,12 @@ public class RadioButtons {
 		double rah = Double.parseDouble(controller.api.Chekrahunky(controller));
 		double symasms = 0;
 		symasms = (double) controller.logic.SummRow() * 0.26;
+		WhatSummSMSForMassMiling(rah, symasms);
+		controller.initialize();
+	}
+
+	// сума смс для масової відправки смс
+	private void WhatSummSMSForMassMiling(double rah, double symasms) {
 		if (symasms > rah) {
 			controller.whethersufficientfundsfromadvertising.setText("Недостатньокоштів на рахунку ");
 			error.YouDontHaveMoneyToSendAllSMS();
@@ -81,7 +92,6 @@ public class RadioButtons {
 			controller.reno.setSelected(false);
 			controller.smartreno.setSelected(true);
 		}
-		controller.initialize();
 	}
 
 	// рідіобатон для поодинокиої інформації нова пошта
@@ -93,6 +103,12 @@ public class RadioButtons {
 		controller.reloadttn.setDisable(false);
 		controller.clearTTN.setDisable(false);
 		controller.status.setText("для однієї накладної");
+		IsTheCorrectFormatNumberTTN();
+		controller.initialize();
+	}
+
+	// перевірка чи правильний формат номера експрес наклданої
+	private void IsTheCorrectFormatNumberTTN() {
 		if (controller.npttn.getText().toString().length() == 14) {
 			controller.getstatusnp.setDisable(false);
 			controller.iffileisemptynp.setText("");
@@ -101,12 +117,10 @@ public class RadioButtons {
 			controller.iffileisemptynp.setText("невірний формат");
 			controller.getstatusnp.setDisable(true);
 		}
-		controller.initialize();
 	}
 
 	// рідіобатон для списку нової пошти
 	public void RadioButtonManyNP() {
-
 		controller.browsgetstatusnp.setDisable(true);
 		controller.npttn.setDisable(true);
 		controller.status.setText("для СТАНДРАТНОГО списку накладних");
@@ -119,21 +133,27 @@ public class RadioButtons {
 			list = controller.ReadFileForTTN(fileName, list);
 			controller.howmanyttnnp.setText(String.valueOf(list.size()));
 			controller.getstatusnp.setDisable(false);
-			if (list.size() != 0) {
-				controller.getstatusnp.setDisable(false);
-			} else {
-				controller.getstatusnp.setDisable(false);
-			}
+			IfFileforGetManyStatusNP(list);
 		} else {
 			controller.howmanyttnnp.setText(null);
 			controller.manynp.setDisable(true);
 			controller.newmanynp.setSelected(true);
 			controller.status.setText("для НОВОГО списку накладних");
 			controller.browsgetstatusnp.setDisable(false);
-			
+
 		}
 		WhatRadioButtonSelected();
 		controller.initialize();
+	}
+
+	// перевірка чи вибрайниф файл не є порожнім для отримання статусу по
+	// накладних
+	private void IfFileforGetManyStatusNP(List<String> list) {
+		if (list.size() != 0) {
+			controller.getstatusnp.setDisable(false);
+		} else {
+			controller.getstatusnp.setDisable(false);
+		}
 	}
 
 	// радіобатон для НОВОГО СПИСКУ наклдадних нової пошти

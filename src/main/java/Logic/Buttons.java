@@ -1,8 +1,6 @@
 package Logic;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.text.SimpleDateFormat;
@@ -13,8 +11,6 @@ import java.util.concurrent.TimeUnit;
 
 import javax.swing.JFileChooser;
 
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-
 import Interface.MainController;
 import NovaPoshta.GetStatusForList;
 import NovaPoshta.NovaPoshta;
@@ -22,7 +18,7 @@ import NovaPoshta.ParsingResult;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 import sms.api.API;
-import sms.api.PhoneRecipient;
+import sms.api.OperatorPhoneRecipient;
 import sms.api.RequestBuilder;
 
 public class Buttons extends Thread {
@@ -31,23 +27,21 @@ public class Buttons extends Thread {
 	public Logic logic;
 	public RadioButtons radiobutton;
 	public MainController controller;
-	private PhoneRecipient phonerecipient;
+	private OperatorPhoneRecipient phonerecipient;
 	private GetStatusForList getstatusforlist;
 
 	@Override
 	public void run() {
-
 		controller.SendSMS.setDisable(true);
 		controller.browsfilefromsms.setDisable(true);
 		ButtonSendSMS();
 		controller.SendSMS.setDisable(false);
 		controller.browsfilefromsms.setDisable(false);
-
 	}
 
 	public Buttons(MainController controller) {
 		this.controller = controller;
-		this.phonerecipient = new PhoneRecipient(controller);
+		this.phonerecipient = new OperatorPhoneRecipient(controller);
 		this.getstatusforlist = new GetStatusForList(controller);
 		this.radiobutton = new RadioButtons(controller);
 		this.error = new ERROR(controller);
@@ -247,10 +241,10 @@ public class Buttons extends Thread {
 					}
 				}
 			} while (forvard.contains(NovaPoshta.xmlanswer));
-			String Status00=null;
-			try{
-			 Status00 = ParsingResult.GetStatusTTNNP(forvard);
-			}catch(StringIndexOutOfBoundsException e ){
+			String Status00 = null;
+			try {
+				Status00 = ParsingResult.GetStatusTTNNP(forvard);
+			} catch (StringIndexOutOfBoundsException e) {
 				error.ERROR();
 			}
 			mainController.getstatusforone.WhatGetStatuNpForOneTTn(forvard, Status00);

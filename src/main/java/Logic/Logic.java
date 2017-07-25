@@ -163,8 +163,8 @@ public class Logic extends Thread {
 								line + "\r\n");
 					}
 				}
-//				controller.howmanyttnnp.setText(null);
-//				controller.howmanyttnnp.setText(String.valueOf(controller.logic.SummRowforNP()));
+				// controller.howmanyttnnp.setText(null);
+				// controller.howmanyttnnp.setText(String.valueOf(controller.logic.SummRowforNP()));
 
 			}
 		}
@@ -197,7 +197,7 @@ public class Logic extends Thread {
 			phonenomber = line.substring(0, 12);
 			whatsend1 = WhooNameSender(whatsend1);
 			textmasage = controller.messagetext.getText().toString();
-			String Status = API.StatusSms(ApiSms, whatsend1, phonenomber, textmasage,phonenomber);
+			String Status = API.StatusSms(ApiSms, whatsend1, phonenomber, textmasage, phonenomber);
 			if (Status.equals("1")) {
 				smssend++;
 			}
@@ -251,7 +251,7 @@ public class Logic extends Thread {
 		phonenomber = controller.telephonereceiver.getText().toString();
 		whatsend1 = WhooNameSender(whatsend1);
 		textmasage = controller.messagetext.getText().toString();
-		String Status = API.StatusSms(ApiSms, whatsend1, phonenomber, textmasage,phonenomber);
+		String Status = API.StatusSms(ApiSms, whatsend1, phonenomber, textmasage, phonenomber);
 		if (Status.equals("1")) {
 			smssend++;
 		}
@@ -521,6 +521,7 @@ public class Logic extends Thread {
 		if (controller.Browsgetstatusnp != null) {
 			if (controller.Browsgetstatusnp == null) {
 				controller.namefilettnnp.setText("файл вибраний не вірно");
+				controller.howmanyttnnp.setText(null);
 				controller.howmanyttnnp.setText("0");
 				controller.getstatusnp.setDisable(true);
 			} else {
@@ -528,8 +529,9 @@ public class Logic extends Thread {
 				int name1 = controller.Browsgetstatusnp.toString().lastIndexOf("\\") + 1;
 				controller.namefilettnnp.setText(controller.Browsgetstatusnp.toString().substring(name1, name));
 				controller.namefilettnnp.setTextFill(Color.GREEN);
-//				controller.howmanyttnnp.setText(null);
-//				controller.howmanyttnnp.setText(String.valueOf(controller.logic.SummRowforNP()));
+				List<String> list = null;
+				list = controller.ReadFileForTTN(controller.Browsgetstatusnp.toString(), list);
+				controller.howmanyttnnp.setText(String.valueOf(list.size()));
 				int how = controller.howmanyttnnp.toString().lastIndexOf("'") + 1;
 				if (controller.howmanyttnnp.toString().substring(41, how - 1).equals("0")) {
 					controller.howmanyttnnp.setTextFill(Color.RED);

@@ -2,13 +2,10 @@ package Interface;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
-import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
@@ -45,16 +42,14 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
-import javafx.stage.FileChooser;
 import sms.api.API;
-import sms.api.PhoneRecipient;
-
+import sms.api.OperatorPhoneRecipient;
 
 public class MainController {
 
 	public Logic logic;
 	public Hyper hyperlink;
-	public PhoneRecipient phonerecipient;
+	public OperatorPhoneRecipient phonerecipient;
 	public RadioButtons radiobutton;
 	public Buttons buttons;
 	public GetStatusForOne getstatusforone;
@@ -67,7 +62,7 @@ public class MainController {
 	public MainController() {
 		this.hyperlink = new Hyper(this);
 		this.logic = new Logic(this);
-		this.phonerecipient = new PhoneRecipient(this);
+		this.phonerecipient = new OperatorPhoneRecipient(this);
 		this.radiobutton = new RadioButtons(this);
 		this.buttons = new Buttons(this);
 		this.getstatusforone = new GetStatusForOne(this);
@@ -76,7 +71,8 @@ public class MainController {
 		this.getstatusforlist = new GetStatusForList(this);
 		this.createexcel = new СreateExcel(this);
 	}
-//////////////////
+
+	//////////////////
 	@FXML
 	public Line line1, line2, line3, line4, line5, line6, line7, line8, line9;
 
@@ -217,7 +213,7 @@ public class MainController {
 		return phonemasage;
 	}
 
-	public PhoneRecipient getPhonerecipient() {
+	public OperatorPhoneRecipient getPhonerecipient() {
 		return phonerecipient;
 	}
 
@@ -370,12 +366,6 @@ public class MainController {
 		radiobutton.RadioButonReno();
 	}
 
-	// кнопка OK на вспливаючому вікні
-	@FXML
-	private void AccespaneYes(ActionEvent event) {
-		buttons.ButtonAccespaneYes(this);
-	}
-
 	// радіобатон для НОВОГО СПИСКУ наклдадних нової пошти
 	@FXML
 	private void NewManyNP(ActionEvent event) {
@@ -518,8 +508,6 @@ public class MainController {
 	@FXML
 	public void InicializeTabsenderblok(MouseEvent mouseEvent) {
 		if (netIsAvailable() == true) {
-			ChecNovaPochtaServeer();
-			ChecatomparkServeer();
 		} else {
 			np.setDisable(true);
 			senderblok.setDisable(true);
@@ -528,21 +516,6 @@ public class MainController {
 			accespane.setVisible(true);
 			accespanelabel.setText("Підключення інетренету відсутнє");
 		}
-	}
-
-	// оновлювати вкладку відправки рекламних повідомлень
-	@FXML
-	public void InicializeTabadvertising(MouseEvent mouseEvent) {
-		// if (netIsAvailable() == true) {
-		// ChecatomparkServeer();
-		// } else {
-		// np.setDisable(true);
-		// senderblok.setDisable(true);
-		// advertising.setDisable(true);
-		// accespane.setDisable(false);
-		// accespane.setVisible(true);
-		// accespanelabel.setText("Підключення інетренету відсутнє");
-		// }
 	}
 
 	// // оноволювати всю форму при русі мишкою
@@ -554,81 +527,6 @@ public class MainController {
 			advertising.setDisable(false);
 			initialize();
 		}
-	}
-
-	// метод що треба зробити якшщо сервер нової пошти не працює
-	private void ChecNovaPochtaServeer() {
-		// if (!ChekNovaPoshtaServer() == false) {
-		// status.setText("Сервер Нової Пошти Непрацює");
-		// np.setDisable(true);
-		// senderblok.setDisable(true);
-		// } else {
-		// np.setDisable(false);
-		// senderblok.setDisable(false);
-		// }
-		// initialize();
-	}
-
-	// метод що потрібно зробити якщо сервер відправки смс не працює
-	private void ChecatomparkServeer() {
-		// if (ChekNovaPoshtaServer() == false) {
-		// status.setText("Сервер відправки смс Непрацює");
-		// senderblok.setDisable(true);
-		// advertising.setDisable(true);
-		// accespane.setDisable(false);
-		// accespane.setVisible(true);
-		// accespanelabel.setText("Сервер відправки смс Непрацює");
-		// } else {
-		// senderblok.setDisable(false);
-		// advertising.setDisable(false);
-		// }
-		// initialize();
-	}
-
-	// // метод що потрібно ззробити якщо ітернет відсутній
-	// public void DidYouHavaEnterhet() {
-	// if (netIsAvailable() == false | ChekNovaPoshtaServer() == false) {
-	// np.setDisable(true);
-	// accespane.setDisable(false);
-	// accespane.setVisible(true);
-	// accespanelabel.setText("Немає Підключення до інтернету");
-	// }
-	// initialize();
-	// }
-
-	// метод перевірки чи серевер нової пошти відповідає
-	public boolean ChekNovaPoshtaServer() {
-		return true;
-		// try {
-		// HttpURLConnection.setFollowRedirects(false);
-		// HttpURLConnection con = (HttpURLConnection) new
-		// URL("https://novaposhta.ua").openConnection();
-		// con.setConnectTimeout(1000);
-		// con.setReadTimeout(1000);
-		// con.setRequestMethod("HEAD");
-		// return (con.getResponseCode() == HttpURLConnection.HTTP_OK);
-		// } catch (Exception e) {
-		// e.printStackTrace();
-		// return false;
-		// }
-	}
-
-	// метод перевірки чи відповідає сервер відправки смс
-	public boolean CheksendersmsServer() {
-		return true;
-		// try {
-		// HttpURLConnection.setFollowRedirects(false);
-		// HttpURLConnection con = (HttpURLConnection) new
-		// URL("http://api.atompark.com/members/sms/xml.php")
-		// .openConnection();
-		// con.setConnectTimeout(1000);
-		// con.setReadTimeout(1000);
-		// con.setRequestMethod("HEAD");
-		// return (con.getResponseCode() == HttpURLConnection.HTTP_OK);
-		// } catch (Exception e) {
-		// e.printStackTrace();
-		// return false;
-		// }
 	}
 
 	// тест підключення інтернету
@@ -672,7 +570,6 @@ public class MainController {
 		while ((line = reader.readLine()) != null) {
 			lines.add(line);
 		}
-		;
 		reader.close();
 		return lines;
 	}
