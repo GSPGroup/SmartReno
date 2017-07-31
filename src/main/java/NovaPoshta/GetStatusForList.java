@@ -7,34 +7,27 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import javax.swing.GroupLayout.Alignment;
-
-import org.apache.poi.ddf.EscherColorRef.SysIndexSource;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 
 import Interface.MainController;
 import Logic.ERROR;
 import javafx.application.Platform;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
-import javafx.scene.image.Image;
-import javafx.stage.Stage;
 import sms.api.API;
 
 public class GetStatusForList extends Thread {
 	public СreateExcel createexcel;
 	public ERROR error;
 	public API api;
-	private MainController controller;
+	public MainController controller;
+	private ParsingResult parsinresult;
 
 	public GetStatusForList(MainController controller) {
 		this.controller = controller;
-		this.api = api;
 	}
+
 
 	@Override
 	public void run() {
@@ -45,10 +38,10 @@ public class GetStatusForList extends Thread {
 		controller.getstatusnp.setDisable(false);
 	}
 
+	private List<String> lines = null;
+
 	// основний метод
 	public void GetStatusForListWriteToExcel() {
-
-		List<String> lines = null;
 		if (controller.manynp.isSelected() == true) {
 			String fileName = controller.getNamefoldertosavexls().getText().toString() + "/накладні.txt";
 			if ((new File(fileName)).exists()) {
@@ -75,6 +68,7 @@ public class GetStatusForList extends Thread {
 			if ((new File(controller.getNamefoldertosavexls().getText().toString() + "/накладні.txt")).exists()) {
 				new File(controller.getNamefoldertosavexls().getText().toString() + "/накладні.txt").delete();
 			}
+
 			MethodToGetStatusNp(lines);
 		}
 		controller.initialize();
@@ -92,15 +86,7 @@ public class GetStatusForList extends Thread {
 			TTN = line.substring(0, 14);
 			String forvard = null;
 			do {
-				try {
-					forvard = NovaPoshta.Xml(TTN, controller.DefaultPhoneNumberSender.getText().toString());
-				} catch (URISyntaxException | IOException e) {
-					MainController.appendUsingFileWriter(
-							controller.getNamefoldertosavexls().getText().toString() + "/" + "Звіт1.txt",
-							MainController.data() + "Сталась помилка при // отриманні статусу по списку накладних"
-									+ "\r\n");
-					ErrorWindow();
-				}
+				forvard = GetXMLAnswer(TTN, forvard);
 				if (forvard.contains(NovaPoshta.xmlanswer)) {
 					try {
 						TimeUnit.SECONDS.sleep(20);
@@ -110,26 +96,25 @@ public class GetStatusForList extends Thread {
 								MainController.data()
 										+ "Сталась помилка при // отриманні статусу по списку накладних (затримка в часі)"
 										+ "\r\n");
-						ErrorWindow();
+						error.ErrorWindow();
 					}
 				}
-			} while (forvard.contains(NovaPoshta.xmlanswer) && MainController.netIsAvailable() == true);
-			String Status00 = ParsingResult.GetStatusTTNNP(forvard);
-			rowNum = WhatGetStatuNpForlist(forvard, Status00, rowNum, sheet, workbook, TTN);
-			num++;
-			controller.getProgeress().setProgress((double) num / lines.size());
-			if (controller.getProgeress().getProgress() == 1.0) {
-				controller.getProgeress().setStyle("-fx-accent: green;");
-				controller.initialize();
+			} while ((forvard.contains(NovaPoshta.xmlanswer) && MainController.netIsAvailable()) == true);
+			if (forvard.contains("<success>true</success>")) {
+				String Status00 = ParsingResult.GetStatusTTNNP(forvard);
+				if (ParsingResult.GetSuccessTTNNP(forvard).equals("true")) {
+					rowNum = WhatGetStatuNpForlist(forvard, Status00, rowNum, sheet, workbook, TTN);
+					num++;
+				}
+				controller.getProgeress().setProgress((double) num / lines.size());
+				if (controller.getProgeress().getProgress() == 1.0) {
+					controller.getProgeress().setStyle("-fx-accent: green;");
+					controller.initialize();
+				}
+			} else {
+				num--;
 			}
 		}
-		WindowMassageGetStatusIsFisnish(num, lines);
-		WhatWriteToFileafterFinishGetStatusNP(num, lines);
-	}
-
-	// вспилваюче вікно зі звітом що зробило по отриманню статусу зі списку по
-	// накладним
-	private void WindowMassageGetStatusIsFisnish(int num, List<String> lines) {
 		final int m = num;
 		final int l = lines.size();
 		Platform.runLater(new Runnable() {
@@ -144,6 +129,19 @@ public class GetStatusForList extends Thread {
 				controller.getProgeress().setProgress(1.0);
 			}
 		});
+		WhatWriteToFileafterFinishGetStatusNP(num, lines);
+	}
+
+	private String GetXMLAnswer(String TTN, String forvard) {
+		try {
+			forvard = NovaPoshta.Xml(TTN, controller.DefaultPhoneNumberSender.getText().toString());
+		} catch (URISyntaxException | IOException e) {
+			MainController.appendUsingFileWriter(
+					controller.getNamefoldertosavexls().getText().toString() + "/" + "Звіт1.txt",
+					MainController.data() + "Сталась помилка при // отриманні статусу по списку накладних" + "\r\n");
+			error.ErrorWindow();
+		}
+		return forvard;
 	}
 
 	// шо записати в файл звіт після того як було отримано список по накладним
@@ -159,20 +157,6 @@ public class GetStatusForList extends Thread {
 					MainController.data() + "Файл: " + controller.Browsgetstatusnp.toString() + " Обробило " + num + "/"
 							+ lines.size() + "\r\n");
 		}
-	}
-
-	private void ErrorWindow() {
-		Platform.runLater(new Runnable() {
-			@Override
-			public void run() {
-				Alert alert = new Alert(AlertType.ERROR);
-				alert.setTitle(" НЕ Виконано");
-				alert.setHeaderText("СТАЛАСЯ ПОМИЛКА ПРИ ВИКОНАННІ ");
-				alert.showAndWait();
-				controller.runindicator.setProgress(1.0);
-				controller.getProgeress().setProgress(1.0);
-			}
-		});
 	}
 
 	// обработчик собитій для отримання методу по відповіді з нової пошти по
@@ -250,94 +234,51 @@ public class GetStatusForList extends Thread {
 		return rowNum;
 	}
 
-	// Відмова
-	private void ifRefusing(String forvard, int rowNum, HSSFSheet sheet, HSSFWorkbook workbook) {
-		if (ParsingResult.GetLastCreatedOnTheBasisNumber(forvard) == null) {
-			DataModel.setStatus(ParsingResult.GetStatus(forvard) + " Повернення не замовлено ");
-			DataModel.setNumber(ParsingResult.GetNumbernTTNNP(forvard));
-			DataModel.setRiznucjaDat("Відмова");
-			// DataModel.setStatusSMS(API.GetStatusSendSms(ParsingResult.GetPhoneNumberRepicientTTNNP(forvard)));
+	// якщо було замовлено поверненя товару
+	private void IfRefusingIsTrue(String forvard) {
+		DataModel.setNumber(ParsingResult.GetNumbernTTNNP(forvard));
+		String forvard1 = ParsingResult.GetLastCreatedOnTheBasisNumber(forvard);
+		String forvard2 = null;
+		forvard2 = GetXMLinTheBasicNumber(forvard1, forvard2);
+		DataModel.setRecipientFullNameEW(ParsingResult.GetRecipientFullNameEW(forvard));
+		DataModel.setPhoneRecipient(ParsingResult.GetPhoneNumberRepicientTTNNP(forvard2));
+		DataModel.setDateCreated(ParsingResult.GetDateCreated(forvard));
+		DataModel.setRiznucjaDat("Відмова");
+		DataModel.setRecipientAddress(ParsingResult.fullRecipientAddress(forvard2));
+		IfTTngoHome(forvard2);
+		if (!DataModel.getStatus().equals("Поверення Відправлення отримано")) {
 			WriteToNewListTTN(ParsingResult.GetNumbernTTNNP(forvard));
-			DataModel.setRecipientDateTime(ParsingResult.GetDataToTaken(forvard));
-			DataModel.setScheduledDeliveryDate(ParsingResult.GetscheduleddeliverydateTTNNP(forvard));
-			DataModel.setDateCreated(ParsingResult.GetDateCreated(forvard));
-			DataModel.setRecipientAddress(ParsingResult.fullRecipientAddress(forvard));
-			DataModel.setPhoneRecipient(ParsingResult.GetPhoneNumberRepicientTTNNP(forvard));
-			DataModel.setRecipientFullNameEW(ParsingResult.GetRecipientFullNameEW(forvard));
-		} else {
-			DataModel.setNumber(ParsingResult.GetNumbernTTNNP(forvard));
-			String forvard1 = ParsingResult.GetLastCreatedOnTheBasisNumber(forvard);
-			String forvard2 = null;
-			try {
-				forvard2 = NovaPoshta.Xml(forvard1, controller.DefaultPhoneNumberSender.getText().toString());
-			} catch (URISyntaxException | IOException e) {
-				MainController.appendUsingFileWriter(
-						controller.getNamefoldertosavexls().getText().toString() + "/" + "Звіт1.txt",
-						MainController.data() + "Сталась помилка при // для спмску метод ВІДМОВА" + "\r\n");
-				ErrorWindow();
-			}
-			DataModel.setRecipientFullNameEW(ParsingResult.GetRecipientFullNameEW(forvard));
-			DataModel.setPhoneRecipient(ParsingResult.GetPhoneNumberRepicientTTNNP(forvard2));
-			DataModel.setDateCreated(ParsingResult.GetDateCreated(forvard2));
-			DataModel.setRiznucjaDat("Відмова");
-			// DataModel.setStatusSMS(API.GetStatusSendSms(ParsingResult.GetPhoneNumberRepicientTTNNP(forvard)));
-			DataModel.setRecipientAddress(ParsingResult.fullRecipientAddress(forvard2));
-			if (ParsingResult.fullRecipientAddress(forvard2).equals(ParsingResult.GoBack)) {
-				DataModel.setStatus("Поверення " + ParsingResult.GetStatus(forvard2));
-			} else {
-				DataModel.setStatus("Поверення НЕ замовлено " + ParsingResult.GetStatus(forvard2));
-			}
-			if (!DataModel.getStatus().equals("Поверення Відправлення отримано")) {
-				WriteToNewListTTN(ParsingResult.GetNumbernTTNNP(forvard));
-			}
-			DataModel.setRecipientDateTime(null);
-			DataModel.setScheduledDeliveryDate(ParsingResult.GetscheduleddeliverydateTTNNP(forvard2));
 		}
+		DataModel.setRecipientDateTime(null);
+		DataModel.setScheduledDeliveryDate(ParsingResult.GetscheduleddeliverydateTTNNP(forvard2));
+	}
+
+	// якщо була відмова івд товару і поверненя не було замовлено
+	private void IfRefusingIsNotTrue(String forvard) {
+		DataModel.setStatus(ParsingResult.GetStatus(forvard) + " Повернення не замовлено ");
+		DataModel.setNumber(ParsingResult.GetNumbernTTNNP(forvard));
+		DataModel.setRiznucjaDat("Відмова");
+		WriteToNewListTTN(ParsingResult.GetNumbernTTNNP(forvard));
+		DataModel.setRecipientDateTime(ParsingResult.GetDataToTaken(forvard));
+		DataModel.setScheduledDeliveryDate(ParsingResult.GetscheduleddeliverydateTTNNP(forvard));
+		DataModel.setDateCreated(ParsingResult.GetDateCreated(forvard));
+		DataModel.setRecipientAddress(ParsingResult.fullRecipientAddress(forvard));
+		DataModel.setPhoneRecipient(ParsingResult.GetPhoneNumberRepicientTTNNP(forvard));
+		DataModel.setRecipientFullNameEW(ParsingResult.GetRecipientFullNameEW(forvard));
 	}
 
 	// Змінено адресу
 	private int ifChangeOfAddress(String forvard, int rowNum, HSSFSheet sheet, HSSFWorkbook workbook, String TTN) {
-
 		String forvard2 = null;
-		try {
-			forvard2 = NovaPoshta.Xml(TTN, controller.DefaultPhoneNumberSender.getText().toString());
-
-		} catch (URISyntaxException | IOException e1) {
-			MainController.appendUsingFileWriter(
-					controller.getNamefoldertosavexls().getText().toString() + "/" + "Звіт1.txt",
-					MainController.data() + "Сталась помилка при // для спмску метод Змінено адресу" + "\r\n");
-			ErrorWindow();
-		}
+		forvard2 = GetXMLIfshangeAdress(TTN, forvard2);
 		String forvard3 = ParsingResult.GetLastCreatedOnTheBasisNumber(forvard2);
 		String phone = ParsingResult.GetPhoneNumberRepicientTTNNP(forvard2);
 		String forvard5 = null;
-		try {
-			forvard5 = NovaPoshta.Xml(forvard3, phone);
-		} catch (URISyntaxException | IOException e) {
-			MainController.appendUsingFileWriter(
-					controller.getNamefoldertosavexls().getText().toString() + "/" + "Звіт1.txt",
-					MainController.data() + "Сталась помилка при // для спмску метод Змінено адресу" + "\r\n");
-			ErrorWindow();
-		}
+		forvard5 = GetXMLOfNewPhone(forvard3, phone, forvard5);
 		DataModel.setStatus("Змінено адресу " + ParsingResult.GetStatus(forvard5));
 		DataModel.setNumber(ParsingResult.GetNumbernTTNNP(forvard));
-		if (ParsingResult.GetDataToTaken(forvard2) == null) {
-			DataModel.setRiznucjaDat(ParsingResult.RahunokDnivIfNotTaken(forvard2, controller));
-
-			WriteToNewListTTN(ParsingResult.GetNumbernTTNNP(forvard));
-		} else {
-			DataModel.setRiznucjaDat("Посилку Забрали");
-			DataModel.setRecipientDateTime(ParsingResult.GetDataToTaken(forvard2));
-		}
-		if (ParsingResult.GetStatus(forvard5).equals(ParsingResult.SendingReceived)
-				| ParsingResult.GetStatus(forvard5).equals(ParsingResult.SendingReceivedCach)
-				| ParsingResult.GetStatus(forvard5).equals(ParsingResult.SendingReceivedSms)) {
-			DataModel.setRiznucjaDat("Посилку Забрали");
-		} else if (ParsingResult.GetStatus(forvard5).equals(ParsingResult.Refusing)
-				| ParsingResult.GetStatus(forvard5).equals(ParsingResult.IfRefusingStatus)) {
-			DataModel.setRiznucjaDat("Відмова");
-			WriteToNewListTTN(ParsingResult.GetNumbernTTNNP(forvard));
-		}
+		IfHuamanGetTTn(forvard, forvard2);
+		TakeOrRefusing(forvard, forvard5);
 		DataModel.setScheduledDeliveryDate(ParsingResult.GetscheduleddeliverydateTTNNP(forvard));
 		DataModel.setDateCreated(ParsingResult.GetDateCreated(forvard));
 		DataModel.setRecipientAddress(ParsingResult.fullRecipientAddress(forvard5));
@@ -352,7 +293,6 @@ public class GetStatusForList extends Thread {
 		DataModel.setStatus(ParsingResult.GetStatus(forvard));
 		DataModel.setNumber(ParsingResult.GetNumbernTTNNP(forvard));
 		DataModel.setRiznucjaDat(ParsingResult.RahunokDnivIfNotTaken(forvard, controller));
-		// DataModel.setStatusSMS(API.GetStatusSendSms(ParsingResult.GetPhoneNumberRepicientTTNNP(forvard)));
 		WriteToNewListTTN(ParsingResult.GetNumbernTTNNP(forvard));
 		DataModel.setRecipientDateTime(ParsingResult.GetDataToTaken(forvard));
 		DataModel.setScheduledDeliveryDate(ParsingResult.GetscheduleddeliverydateTTNNP(forvard));
@@ -367,7 +307,6 @@ public class GetStatusForList extends Thread {
 		DataModel.setStatus("Відправлення отримано. Гроші видано ");
 		DataModel.setNumber(ParsingResult.GetNumbernTTNNP(forvard));
 		DataModel.setRiznucjaDat("Посилку Забрали");
-		// DataModel.setStatusSMS(API.GetStatusSendSms(ParsingResult.GetPhoneNumberRepicientTTNNP(forvard)));
 		DataModel.setRecipientDateTime(ParsingResult.GetDataToTaken(forvard));
 		DataModel.setScheduledDeliveryDate(ParsingResult.GetscheduleddeliverydateTTNNP(forvard));
 		DataModel.setDateCreated(ParsingResult.GetDateCreated(forvard));
@@ -381,7 +320,6 @@ public class GetStatusForList extends Thread {
 		DataModel.setStatus(ParsingResult.GetStatus(forvard));
 		DataModel.setNumber(ParsingResult.GetNumbernTTNNP(forvard));
 		DataModel.setRiznucjaDat(null);
-		// DataModel.setStatusSMS(API.GetStatusSendSms(ParsingResult.GetPhoneNumberRepicientTTNNP(forvard)));
 		WriteToNewListTTN(ParsingResult.GetNumbernTTNNP(forvard));
 		DataModel.setRecipientDateTime(ParsingResult.GetDataToTaken(forvard));
 		DataModel.setScheduledDeliveryDate(ParsingResult.GetscheduleddeliverydateTTNNP(forvard));
@@ -396,7 +334,6 @@ public class GetStatusForList extends Thread {
 		DataModel.setStatus("Відправлення отримано");
 		DataModel.setNumber(ParsingResult.GetNumbernTTNNP(forvard));
 		DataModel.setRiznucjaDat("Посилку Забрали");
-		// DataModel.setStatusSMS(API.GetStatusSendSms(ParsingResult.GetPhoneNumberRepicientTTNNP(forvard)));
 		DataModel.setRecipientDateTime(ParsingResult.GetDataToTaken(forvard));
 		DataModel.setScheduledDeliveryDate(ParsingResult.GetscheduleddeliverydateTTNNP(forvard));
 		DataModel.setDateCreated(ParsingResult.GetDateCreated(forvard));
@@ -410,7 +347,6 @@ public class GetStatusForList extends Thread {
 		DataModel.setStatus("Отримувач переглядає посилку");
 		DataModel.setNumber(ParsingResult.GetNumbernTTNNP(forvard));
 		DataModel.setRiznucjaDat(null);
-		// DataModel.setStatusSMS(API.GetStatusSendSms(ParsingResult.GetPhoneNumberRepicientTTNNP(forvard)));
 		WriteToNewListTTN(ParsingResult.GetNumbernTTNNP(forvard));
 		DataModel.setRecipientDateTime(null);
 		DataModel.setScheduledDeliveryDate(ParsingResult.GetscheduleddeliverydateTTNNP(forvard));
@@ -425,7 +361,6 @@ public class GetStatusForList extends Thread {
 		DataModel.setStatus("Відправлення отримано Очікуйте СМС Забрали: " + ParsingResult.GetDataToTaken(forvard));
 		DataModel.setNumber(ParsingResult.GetNumbernTTNNP(forvard));
 		DataModel.setRiznucjaDat("Посилку Забрали");
-		// DataModel.setStatusSMS(API.GetStatusSendSms(ParsingResult.GetPhoneNumberRepicientTTNNP(forvard)));
 		DataModel.setRecipientDateTime(ParsingResult.GetDataToTaken(forvard));
 		DataModel.setScheduledDeliveryDate(ParsingResult.GetscheduleddeliverydateTTNNP(forvard));
 		DataModel.setDateCreated(ParsingResult.GetDateCreated(forvard));
@@ -434,4 +369,86 @@ public class GetStatusForList extends Thread {
 		DataModel.setRecipientFullNameEW(ParsingResult.GetRecipientFullNameEW(forvard));
 	}
 
+	// після переадресаії товар був отриманий чи була відмова
+	private void TakeOrRefusing(String forvard, String forvard5) {
+		if (ParsingResult.GetStatus(forvard5).equals(ParsingResult.SendingReceived)
+				| ParsingResult.GetStatus(forvard5).equals(ParsingResult.SendingReceivedCach)
+				| ParsingResult.GetStatus(forvard5).equals(ParsingResult.SendingReceivedSms)) {
+			DataModel.setRiznucjaDat("Посилку Забрали");
+		} else if (ParsingResult.GetStatus(forvard5).equals(ParsingResult.Refusing)
+				| ParsingResult.GetStatus(forvard5).equals(ParsingResult.IfRefusingStatus)) {
+			DataModel.setRiznucjaDat("Відмова");
+			WriteToNewListTTN(ParsingResult.GetNumbernTTNNP(forvard));
+		}
+	}
+
+	// посилку забрали чи не забрали ?
+	private void IfHuamanGetTTn(String forvard, String forvard2) {
+		if (ParsingResult.GetDataToTaken(forvard2) == null) {
+			DataModel.setRiznucjaDat(ParsingResult.RahunokDnivIfNotTaken(forvard2, controller));
+
+			WriteToNewListTTN(ParsingResult.GetNumbernTTNNP(forvard));
+		} else {
+			DataModel.setRiznucjaDat("Посилку Забрали");
+			DataModel.setRecipientDateTime(ParsingResult.GetDataToTaken(forvard2));
+		}
+	}
+
+	// отримати повну відповідь ХМЛ за допомоги НОВОГО номеру телефону
+	private String GetXMLOfNewPhone(String forvard3, String phone, String forvard5) {
+		try {
+			forvard5 = NovaPoshta.Xml(forvard3, phone);
+		} catch (URISyntaxException | IOException e) {
+			MainController.appendUsingFileWriter(
+					controller.getNamefoldertosavexls().getText().toString() + "/" + "Звіт1.txt",
+					MainController.data() + "Сталась помилка при // для спмску метод Змінено адресу" + "\r\n");
+			error.ErrorWindow();
+		}
+		return forvard5;
+	}
+
+	// отримати ХМЛ відповідь по внутрішньому номері телефіну накладної
+	private String GetXMLIfshangeAdress(String TTN, String forvard2) {
+		try {
+			forvard2 = NovaPoshta.Xml(TTN, controller.DefaultPhoneNumberSender.getText().toString());
+
+		} catch (URISyntaxException | IOException e1) {
+			MainController.appendUsingFileWriter(
+					controller.getNamefoldertosavexls().getText().toString() + "/" + "Звіт1.txt",
+					MainController.data() + "Сталась помилка при // для спмску метод Змінено адресу" + "\r\n");
+			error.ErrorWindow();
+		}
+		return forvard2;
+	}
+
+	// якщо посилка відправляється назад
+	private void IfTTngoHome(String forvard2) {
+		if (ParsingResult.fullRecipientAddress(forvard2).equals(ParsingResult.GoBack)) {
+			DataModel.setStatus("Поверення " + ParsingResult.GetStatus(forvard2));
+		} else {
+			DataModel.setStatus("Поверення НЕ замовлено " + ParsingResult.GetStatus(forvard2));
+		}
+	}
+
+	// отримати відповідь хмл з внітрішнім номером наклданої
+	private String GetXMLinTheBasicNumber(String forvard1, String forvard2) {
+		try {
+			forvard2 = NovaPoshta.Xml(forvard1, controller.DefaultPhoneNumberSender.getText().toString());
+		} catch (URISyntaxException | IOException e) {
+			MainController.appendUsingFileWriter(
+					controller.getNamefoldertosavexls().getText().toString() + "/" + "Звіт1.txt",
+					MainController.data() + "Сталась помилка при // для спмску метод ВІДМОВА" + "\r\n");
+			error.ErrorWindow();
+		}
+		return forvard2;
+	}
+
+	// Відмова
+	private void ifRefusing(String forvard, int rowNum, HSSFSheet sheet, HSSFWorkbook workbook) {
+		if (ParsingResult.GetLastCreatedOnTheBasisNumber(forvard).equals(" ")) {
+			IfRefusingIsNotTrue(forvard);
+		} else {
+			IfRefusingIsTrue(forvard);
+		}
+	}
 }

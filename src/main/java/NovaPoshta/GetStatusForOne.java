@@ -14,7 +14,7 @@ public class GetStatusForOne {
 	public Logic logic;
 	private MainController controller;
 	public ERROR error;
-
+	private	ParsingResult parsinresult;
 	public GetStatusForOne(MainController controller) {
 		this.controller = controller;
 
@@ -235,7 +235,7 @@ public class GetStatusForOne {
 					MainController.data() + "Сталась помилка при // Змінено адресу" + "\r\n");
 			error.ERROR();
 		}
-		String Status00 = ParsingResult.GetStatusTTNNP(forvard5);
+		String Status00 = parsinresult.GetStatusTTNNP(forvard5);
 		WhatGetStatuNpForOneTTn(forvard5, Status00);
 
 	}

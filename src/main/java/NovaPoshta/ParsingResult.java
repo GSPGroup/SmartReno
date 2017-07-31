@@ -6,11 +6,15 @@ import java.util.Calendar;
 import java.util.Date;
 
 import Interface.MainController;
+import Logic.ERROR;
+import Logic.Hyper;
 import Logic.Logic;
 
 public class ParsingResult {
-	private MainController controller;
+	private static MainController controller;
 	public Logic logic;
+	public ERROR error;
+	public GetStatusForList getstatusforlist;
 
 	public ParsingResult(MainController controller) {
 		this.controller = controller;
@@ -29,17 +33,39 @@ public class ParsingResult {
 	public static String GoWay = "Відправлення прямує";
 	public static String Watching = "Відправлення передано до огляду отримувачу";
 
+	// отримати стан накладної
+	public static String GetSuccessTTNNP(String forvard) {
+		try {
+			int success1 = forvard.indexOf("<success>") + 9;
+			int success2 = forvard.indexOf("</success>");
+			String forvard1 = forvard.substring(success1, success2);
+			return forvard1;
+		} catch (Exception e) {
+//			MainController.appendUsingFileWriter(
+//					controller.getNamefoldertosavexls().getText().toString() + "/" + "Звіт1.txt",
+//					"проблема з номером накладної" + GetNumbernTTNNP(forvard));
+			return null;
+		}
+	}
+
 	// отримати статус накладної
 	public static String GetStatusTTNNP(String forvard) {
-		int Status1 = forvard.indexOf("<Status>") + 8;
-		int Status2 = forvard.indexOf("</Status>");
-		String forvard1 = forvard.substring(Status1, Status2);
-		if (forvard1.length() > 14) {
-			if (forvard1.substring(0, 19).equals(GoWay)) {
-				return forvard1 = GoWay;
+		try {
+			int Status1 = forvard.indexOf("<Status>") + 8;
+			int Status2 = forvard.indexOf("</Status>");
+			String forvard1 = forvard.substring(Status1, Status2);
+			if (forvard1.length() > 14) {
+				if (forvard1.substring(0, 19).equals(GoWay)) {
+					return forvard1 = GoWay;
+				}
 			}
+			return forvard1;
+		} catch (NullPointerException e) {
+			MainController.appendUsingFileWriter(
+					controller.getNamefoldertosavexls().getText().toString() + "/" + "Звіт1.txt",
+					"проблема з номером накладної" + GetNumbernTTNNP(forvard));
+			return null;
 		}
-		return forvard1;
 	}
 
 	// отримати статус накладної
@@ -85,6 +111,7 @@ public class ParsingResult {
 
 	// отримати номер накладної при зміні
 	public static String GetNumbernTTNNP(String forvard) {
+		
 		int Number1 = forvard.indexOf("<Number>") + 8;
 		int Number2 = forvard.indexOf("</Number>");
 		forvard = forvard.substring(Number1, Number2);
@@ -231,9 +258,10 @@ public class ParsingResult {
 											// отримувача
 		DataModel.CityRecipient = null;// місто отримувача
 		DataModel.ScheduledDeliveryDate = null;// прогнозована дата доставки
-		DataModel.RiznucjaDat = null;// скільки днів посилка знаходиться на відділення з дня ПРГНОЗОВАНОЇ доставки
-		DataModel.StatusSMS=null;	 //статус смс
+		DataModel.RiznucjaDat = null;// скільки днів посилка знаходиться на
+										// відділення з дня ПРГНОЗОВАНОЇ
+										// доставки
+		DataModel.StatusSMS = null; // статус смс
 	}
-									 
 
 }

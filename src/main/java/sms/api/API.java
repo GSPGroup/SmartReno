@@ -2,6 +2,9 @@ package sms.api;
 
 import java.util.Map;
 
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+
 import Interface.MainController;
 import NovaPoshta.ParsingResult;
 import javafx.application.Platform;
@@ -43,14 +46,25 @@ public class API {
 		API ApiSms = new API(Request, login, password);
 		String ApiSmsforvard = ApiSms.getStatus(forvard);
 		if (ApiSmsforvard.equals("<?xml version=\"1.0\" encoding=\"UTF-8\"?><deliveryreport></deliveryreport>")) {
-			return ApiSmsforvard = "СМС не відправлено";
+			return ApiSmsforvard = "СМС не відправлялось";
 		} else {
 			int Status1 = ApiSmsforvard.indexOf("status=\"") + 8;
 			int Status2 = ApiSmsforvard.indexOf("\" amount=\"");
-
 			String Status = ApiSmsforvard.substring(Status1, Status2);
-			return Status;
+			return WhatGetStatuNpForlist(Status);
 		}
+	}
+
+	public static String WhatGetStatuNpForlist(String Status) {
+		switch (Status) {
+		case "DELIVERED":
+			return Status = "Доставлено";
+		case "SENT":
+			return Status = "Відправлено";
+		case "EXPIRED":
+			return Status = "Прострочено";
+		}
+		return Status;
 	}
 
 	public String getStatus(String msgId) {

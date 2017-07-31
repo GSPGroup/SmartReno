@@ -26,11 +26,13 @@ import Logic.RadioButtons;
 import Logic.ThreadsSendSMS;
 import NovaPoshta.GetStatusForList;
 import NovaPoshta.GetStatusForOne;
+import NovaPoshta.ParsingResult;
 import NovaPoshta.СreateExcel;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
@@ -40,7 +42,6 @@ import javafx.scene.control.Tab;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
-import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import sms.api.API;
 import sms.api.OperatorPhoneRecipient;
@@ -58,8 +59,10 @@ public class MainController {
 	public GetStatusForList getstatusforlist;
 	public СreateExcel createexcel;
 	public ERROR error;
+	private ParsingResult parsinresult;
 
 	public MainController() {
+		this.parsinresult = new ParsingResult(this);
 		this.hyperlink = new Hyper(this);
 		this.logic = new Logic(this);
 		this.phonerecipient = new OperatorPhoneRecipient(this);
@@ -102,7 +105,7 @@ public class MainController {
 	public Button BrowsDefaultPacageToFindfileTTNNP, BrowsFolderToSaveXLSNP, accespaneYES, getstatusnp,
 			browsgetstatusnp, getstatusit, browsgetstatusit, SendSMS, browsfilefromsms, gethowmanymoney,
 			browsfilefromsmsadvertising, sendsmsadvertising, yes, no, clearnp, cleartextandphone,
-			reloadmessagetextandtelephonereceiver, browsfoldertosavexls, reloadttn, clearTTN;
+			reloadmessagetextandtelephonereceiver, browsfoldertosavexls, reloadttn, clearTTN, cancel;
 	///////////////////////////////////////////////////////
 	// для списку нової пошти
 	// // для однієї нової пошти
@@ -180,7 +183,7 @@ public class MainController {
 	// вспливаюче вікно
 	// вспливаюче вікно всюда
 	@FXML
-	public Hyperlink myatompark, novaposhta, intime, autor;
+	public Hyperlink myatompark, novaposhta, intime, autor, smsreport;
 	@FXML
 	public Pane accespane, paneagree;
 	// прогрес бар
@@ -392,6 +395,7 @@ public class MainController {
 			progeress.setProgress(1.0);
 			runindicator.setProgress(1.0);
 		} else {
+
 			progeress.setProgress(0.0);
 			progeress.setStyle("-fx-accent: red;");
 			GetStatusForList StatusForList = new GetStatusForList(this);
@@ -491,17 +495,18 @@ public class MainController {
 	// оновлювати вкладку нова пошта при руху мишкою
 	@FXML
 	public void InicializeTabNovaPoshta(MouseEvent mouseEvent) {
-		if ((new File(namefoldertosavexls.getText().toString() + "/накладні.txt")).exists()) {
-			manynp.setDisable(false);
-		} else {
-			howmanyttnnp.setText(null);
-			manynp.setDisable(true);
-			newmanynp.setSelected(true);
-			namefilettnnp.setText("Стандартний файл відсутній");
-			namefilettnnp.setTextFill(Color.RED);
-			browsgetstatusnp.setDisable(false);
-		}
-		initialize();
+		// if ((new File(namefoldertosavexls.getText().toString() +
+		// "/накладні.txt")).exists()) {
+		// manynp.setDisable(false);
+		// } else {
+		// howmanyttnnp.setText(null);
+		// manynp.setDisable(true);
+		// newmanynp.setSelected(true);
+		// namefilettnnp.setText("Стандартний файл відсутній");
+		// namefilettnnp.setTextFill(Color.RED);
+		// browsgetstatusnp.setDisable(false);
+		// }
+		// initialize();
 	}
 
 	// оновлювати вкладку відправки смс
@@ -549,6 +554,12 @@ public class MainController {
 	private void Close(ActionEvent event) {
 		((Node) (event.getSource())).getScene().getWindow().hide();
 
+	}
+
+	// кнопка зупинити виконання програми
+	@FXML
+	private void SMSReport(ActionEvent event) {
+		hyperlink.SMSReport();
 	}
 
 	// прочитати кожну строчку в вибраному файлі з накладними для нової пошти

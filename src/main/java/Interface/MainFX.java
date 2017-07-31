@@ -53,6 +53,5 @@ public class MainFX extends Application {
 	public static void main(String[] args)
 			throws UnsupportedEncodingException, ClientProtocolException, URISyntaxException, IOException {
 		launch(args);
-System.out.println();
 	}
 }

@@ -70,4 +70,17 @@ public class Hyper {
 		}
 		controller.initialize();
 	}
+
+	public void SMSReport() {
+		String InTime = "https://myatompark.com/sms/stat/";
+		try {
+			Desktop.getDesktop().browse(new URI(InTime));
+		} catch (IOException | URISyntaxException e) {
+			MainController.appendUsingFileWriter(
+					controller.getNamefoldertosavexls().getText().toString() + "/" + "Звіт1.txt",
+					MainController.data() + "Сталась помилка при // гіперсилка на сайт інтайму" + "\r\n");
+			error.EthernetERROR();
+		}
+		controller.initialize();
+	}
 }

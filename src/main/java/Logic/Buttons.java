@@ -29,6 +29,7 @@ public class Buttons extends Thread {
 	public MainController controller;
 	private OperatorPhoneRecipient phonerecipient;
 	private GetStatusForList getstatusforlist;
+	private	ParsingResult parsinresult;
 
 	@Override
 	public void run() {
@@ -243,7 +244,7 @@ public class Buttons extends Thread {
 			} while (forvard.contains(NovaPoshta.xmlanswer));
 			String Status00 = null;
 			try {
-				Status00 = ParsingResult.GetStatusTTNNP(forvard);
+				Status00 = parsinresult.GetStatusTTNNP(forvard);
 			} catch (StringIndexOutOfBoundsException e) {
 				error.ERROR();
 			}

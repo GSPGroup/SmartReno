@@ -15,6 +15,7 @@ public class ERROR {
 		this.controller = controller;
 	}
 
+	// СТАЛАСЯ ПОМИЛКА ПРИ ВІДПРВЦІ
 	public void WindowOfERRORtosendSMS() {
 		MainController.appendUsingFileWriter(
 				controller.getNamefoldertosavexls().getText().toString() + "/" + "Звіт1.txt",
@@ -32,6 +33,7 @@ public class ERROR {
 		});
 	}
 
+	// звіт по відправленим смс
 	public void ReportOfSendSMS(Buttons buttons, List<String> lines, int smssend, int duble) {
 		MainController.appendUsingFileWriter(
 				buttons.controller.getNamefoldertosavexls().getText().toString() + "/" + "Звіт1.txt",
@@ -68,6 +70,7 @@ public class ERROR {
 		});
 	}
 
+	// Проблеми З підключенням До мережі
 	public void EthernetERROR() {
 		Platform.runLater(new Runnable() {
 			@Override
@@ -82,6 +85,7 @@ public class ERROR {
 		});
 	}
 
+	// КОШтів на рахунку не достатньо для відправки всіх SMS
 	void YouDontHaveMoneyToSendAllSMS() {
 		Platform.runLater(new Runnable() {
 			@Override
@@ -90,6 +94,21 @@ public class ERROR {
 				alert.setTitle("ПОПОВНИ РАХУНОК");
 				alert.setHeaderText("КОШтів на рахунку не достатньо для відправки всіх SMS");
 				alert.showAndWait();
+			}
+		});
+	}
+
+	// СТАЛАСЯ ПОМИЛКА ПРИ ВИКОНАННІ
+	public void ErrorWindow( ) {
+		Platform.runLater(new Runnable() {
+			@Override
+			public void run() {
+				Alert alert = new Alert(AlertType.ERROR);
+				alert.setTitle(" НЕ Виконано");
+				alert.setHeaderText("СТАЛАСЯ ПОМИЛКА ПРИ ВИКОНАННІ ");
+				alert.showAndWait();
+				 controller.runindicator.setProgress(1.0);
+				 controller.getProgeress().setProgress(1.0);
 			}
 		});
 	}
