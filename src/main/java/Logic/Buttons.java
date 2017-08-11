@@ -29,7 +29,7 @@ public class Buttons extends Thread {
 	public MainController controller;
 	private OperatorPhoneRecipient phonerecipient;
 	private GetStatusForList getstatusforlist;
-	private	ParsingResult parsinresult;
+	private ParsingResult parsinresult;
 
 	@Override
 	public void run() {
@@ -75,7 +75,7 @@ public class Buttons extends Thread {
 				String fileName = controller.getNamefoldertosavexls().getText().toString() + "/накладні.txt";
 				if ((new File(fileName)).exists()) {
 					if (!textFromFile.toString().contains("Ваш товар отправлен. ТТН№" + TTN)) {
-						whatsend1 = SendSMStoGetPhoneNumberToNP(TTN, whatsend1, lines, smssend);
+						smssend = SendSMStoGetPhoneNumberToNP(TTN, whatsend1, lines, smssend);
 					} else {
 						MainController.appendUsingFileWriter(
 								controller.getNamefoldertosavexls().getText().toString() + "/" + "Звіт1.txt",
@@ -84,17 +84,18 @@ public class Buttons extends Thread {
 						duble++;
 					}
 				} else {
-					whatsend1 = SendSMStoGetPhoneNumberToNP(TTN, whatsend1, lines, smssend);
+					smssend = SendSMStoGetPhoneNumberToNP(TTN, whatsend1, lines, smssend);
 				}
 			} else {
-				whatsend1 = SendSMStoGetPhoneNumberToNP(TTN, whatsend1, lines, smssend);
+				smssend = SendSMStoGetPhoneNumberToNP(TTN, whatsend1, lines, smssend);
 			}
 		}
 		error.ReportOfSendSMS(this, lines, smssend, duble);
 	}
-///
+
+	///
 	// метод відправки смс попередньо діставши номер телефоу з нової пошти
-	private String SendSMStoGetPhoneNumberToNP(String TTN, String whatsend1, List<String> lines, int smssend) {
+	private int SendSMStoGetPhoneNumberToNP(String TTN, String whatsend1, List<String> lines, int smssend) {
 		WriteTTNtoFileAfterSendSMS(TTN);
 		WriteTTNtoFileAfterSendSMSInFIle(TTN);
 		String forvard = null;
@@ -123,7 +124,8 @@ public class Buttons extends Thread {
 		if (Status0.equals("1")) {
 			smssend++;
 		}
-		controller.getProgeress().setProgress((double) smssend / lines.size());
+		controller.getProgeress().setProgress((double) smssend / (double) lines.size());
+		controller.initialize();
 		if (controller.getProgeress().getProgress() == 1.0) {
 			controller.getProgeress().setStyle("-fx-accent: green;");
 			controller.initialize();
@@ -132,7 +134,7 @@ public class Buttons extends Thread {
 				controller.getNamefoldertosavexls().getText().toString() + "/" + "Звіт1.txt",
 				MainController.data() + whatsend1 + "  " + textsms + "  " + phonenumberrepicient + "\r\n");
 
-		return whatsend1;
+		return smssend;
 	}
 
 	// записати номер накладної в файл після того як було відправленно смс

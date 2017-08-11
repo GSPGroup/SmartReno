@@ -3,18 +3,12 @@ package Logic;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
-
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 
 import Interface.MainController;
 import javafx.application.Platform;
@@ -256,9 +250,9 @@ public class Logic extends Thread {
 			smssend++;
 		}
 		smsned++;
-		MainController.appendUsingFileWriter("/Desktop/Звіт1.txt",
+		MainController.appendUsingFileWriter(controller.getNamefoldertosavexls().getText().toString()+"/Звіт1.txt",
 				MainController.data() + whatsend1 + "  " + textmasage + "  " + phonenomber + "\r\n");
-		MainController.appendUsingFileWriter("/Desktop/Звіт1.txt",
+		MainController.appendUsingFileWriter(controller.getNamefoldertosavexls().getText().toString()+"/Звіт1.txt",
 				MainController.data() + "Відправило СМС: " + smssend + "/" + smsned + "\r\n");
 		DialogWindwOfSendOneSMS(phonenomber, smssend);
 	}
@@ -374,9 +368,7 @@ public class Logic extends Thread {
 		int i = 0;
 		BufferedReader bufferedReader = null;
 		String FindFileTxt = null;
-		if (controller.Browsgetstatusnp != null) {
-			FindFileTxt = controller.Browsgetstatusnp.toString();
-		} else if (controller.Browsfilefromsms != null) {
+		if (controller.Browsfilefromsms != null) {
 			FindFileTxt = controller.Browsfilefromsms.toString();
 		} else if (controller.Browsflefromsmsadvertising != null) {
 			FindFileTxt = controller.Browsflefromsmsadvertising.toString();

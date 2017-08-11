@@ -22,7 +22,6 @@ public class GetStatusForList extends Thread {
 	public ERROR error;
 	public API api;
 	public MainController controller;
-	private ParsingResult parsinresult;
 
 	public GetStatusForList(MainController controller) {
 		this.controller = controller;
@@ -163,6 +162,7 @@ public class GetStatusForList extends Thread {
 	// накладній
 	public int WhatGetStatuNpForlist(String forvard, String Status00, int rowNum, HSSFSheet sheet,
 			HSSFWorkbook workbook, String TTN) {
+		System.out.println(TTN);
 		switch (Status00) {
 		// Відправлення отримано
 		case "Відправлення отримано":
